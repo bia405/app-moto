@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoVibe | Clima & Garagem</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+
+    <div class="weather-widget" id="weatherWidget">
+        <div class="weather-icon-container">
+            <img src="https://openweathermap.org/img/wn/02d@2x.png" alt="Ícone Clima" id="wIcon">
+        </div>
+        <div class="weather-data">
+            <span class="temp" id="wTemp">--°C</span>
+            <span class="city" id="wCity">Sua Cidade</span>
+        </div>
+        <button class="change-city-btn" id="openModalBtn">
+            <span class="material-symbols-rounded">edit_location_alt</span>
+        </button>
+    </div>
+
+    <header>
+        <div class="logo">
+            <span class="material-symbols-rounded">motorcycle</span>
+            <h1>Moto<span>Vibe</span></h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="section-header">
+            <h2>Minha Garagem</h2>
+            <p>Selecione uma moto para ver detalhes</p>
+        </div>
+        
+        <div class="bike-grid" id="bikeGrid">
+            </div>
+    </main>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3>Alterar Localização</h3>
+            <p>Digite a cidade para verificar o clima antes de pilotar.</p>
+            <div class="search-box">
+                <input type="text" id="cityInput" placeholder="Ex: São Paulo, BR">
+                <button id="searchBtn">
+                    <span class="material-symbols-rounded">search</span>
+                </button>
+            </div>
+            <button class="close-modal-btn" id="closeModalBtn">Cancelar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Clima App</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .clima {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #f0f0f0;
+      padding: 10px 15px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Minha Página</h1>
+  <div class="clima" id="clima">Carregando clima...</div>
+
+  <script>
+    const apiKey = "SUA_API_KEY_AQUI"; // pega no site do OpenWeather
+    const cidade = "Sao Paulo";
+
+    async function pegarClima() {
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${apiKey}&units=metric&lang=pt_br`;
+      const resposta = await fetch(url);
+      const dados = await resposta.json();
+      const temp = dados.main.temp;
+      const desc = dados.weather[0].description;
+      document.getElementById("clima").innerHTML = `${cidade}<br>${temp}°C<br>${desc}`;
+    }
+
+    pegarClima();
+  </script>
+</body>
+</html>

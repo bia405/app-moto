@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Mini GAN Artista</title>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+</head>
+
+<body style="text-align:center; font-family:Arial;">
+<h1>IA Generativa: Treinando uma GAN para Arte</h1>
+<p id="status">Carregando dados...</p>
+<canvas id="gan-canvas" width="28" height="28" style="border:1px solid black;"></canvas>
+
+<script>
+// ===================== GERADOR =====================
+function criarGerador() {
+    const model = tf.sequential();
+
+    model.add(tf.layers.dense({ inputShape: [100], units: 256, activation: 'relu' }));
+    model.add(tf.layers.dense({ units: 512, activation: 'relu' })); // 🔥 mais forte
+    model.add(tf.layers.dense({ units: 784, activation: 'tanh' }));
+
+    return model;
+}
+
+// ===================== DISCRIMINADOR =====================
+function criarDiscriminador() {
+    const model = tf.sequential();
+
+    model.add(tf.layers.dense({ inputShape: [784], units: 512 })); // 🔥 mais forte
+    model.add(tf.layers.leakyReLU({ alpha: 0.2 }));
+
+    model.add(tf.layers.dense({ units: 256 }));
+    model.add(tf.layers.leakyReLU({ alpha: 0.2 }));
+
+    model.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
+
+    return model;
+}
+
+const gerador = criarGerador();
+const discriminador = criarDiscriminador();
+
+const otimizadorD = tf.train.adam(0.0001);
+const otimizadorG = tf.train.adam(0.0001);
+
+// ===================== MNIST LEVE =====================
+async function carregarMNIST() {
+    const img = new Image();
+    img.crossOrigin = '';
+    img.src = 'https://storage.googleapis.com/learnjs-data/model-builder/mnist_images.png';
+
+    await new Promise(resolve => img.onload = resolve);
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const numImages = 10000;
+    const size = 28;
+
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+
+    const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    const images = [];
+
+    for (let i = 0; i < numImages; i++) {
+        const image = [];
+
+        for (let j = 0; j < size * size; j++) {
+            const pixelIndex = i * size * size * 4 + j * 4;
+            image.push(data[pixelIndex] / 255);
+        }
+
+        images.push(image);
+    }
+
+    return tf.tensor2d(images);
+}
+
+// ===================== TREINO =====================
+async function treinarPasso(imagensReais) {
+
+    tf.tidy(() => {
+        const ruido = tf.randomNormal([imagensReais.shape[0], 100]);
+        const fakes = gerador.predict(ruido);
+
+        otimizadorD.minimize(() => {
+            const real = discriminador.predict(imagensReais);
+            const fake = discriminador.predict(fakes);
+
+            const lossReal = tf.losses.sigmoidCrossEntropy(tf.onesLike(real), real);
+            const lossFake = tf.losses.sigmoidCrossEntropy(tf.zerosLike(fake), fake);
+
+            return lossReal.add(lossFake);
+        });
+    });
+
+    tf.tidy(() => {
+        const ruido = tf.randomNormal([imagensReais.shape[0], 100]);
+
+        otimizadorG.minimize(() => {
+            const fake = discriminador.predict(gerador.predict(ruido));
+            return tf.losses.sigmoidCrossEntropy(tf.onesLike(fake), fake);
+        });
+    });
+}
+
+// ===================== VISUALIZAÇÃO =====================
+async function visualizar() {
+    const ruido = tf.randomNormal([1, 100]);
+    const img = gerador.predict(ruido);
+
+    const display = img.reshape([28, 28, 1]).add(1).div(2);
+
+    const canvas = document.getElementById('gan-canvas');
+    await tf.browser.toPixels(display, canvas);
+}
+
+// ===================== LOOP =====================
+async function executar() {
+    const dados = await carregarMNIST();
+
+    document.getElementById('status').innerText = "Treinando... (aguarde alguns minutos)";
+
+    for (let epoca = 0; epoca < 500; epoca++) { // 🔥 MUITO MAIS ÉPOCAS
+
+        const batch = tf.tidy(() => {
+            const indices = tf.randomUniform([64], 0, dados.shape[0], 'int32');
+            return dados.gather(indices);
+        });
+
+        await treinarPasso(batch);
+
+        if (epoca % 5 === 0) { // 🔥 mostra mais evolução
+            console.log("Época:", epoca);
+            await visualizar();
+        }
+
+        await tf.nextFrame();
+    }
+
+    document.getElementById('status').innerText = "Treinamento Concluído!";
+}
+
+executar();
+</script>
+</body>
+</html>
