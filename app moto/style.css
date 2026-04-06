@@ -1,0 +1,115 @@
+:root {
+    --primary: #ff3e3e;
+    --dark-bg: #0f0f0f;
+    --card-bg: #1a1a1a;
+    --glass: rgba(255, 255, 255, 0.05);
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Clima no Canto Superior Esquerdo */
+.weather-overlay {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+.weather-card {
+    background: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 20px;
+    border: 1px solid var(--glass);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.search-bar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.search-bar input {
+    background: var(--glass);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 10px;
+    color: white;
+    width: 120px;
+}
+
+.search-bar button {
+    background: var(--primary);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.weather-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.weather-info img { width: 40px; }
+.weather-info span { font-size: 1.5rem; font-weight: bold; }
+
+/* Grid de Motos */
+.container { padding: 40px 20px; max-width: 1200px; margin: auto; }
+
+.hero {
+    text-align: center;
+    padding: 100px 20px 40px;
+    background: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
+}
+
+.hero h1 span { color: var(--primary); }
+
+.grid-motos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.moto-card {
+    background: var(--card-bg);
+    border-radius: 25px;
+    overflow: hidden;
+    transition: 0.3s;
+    border: 1px solid transparent;
+}
+
+.moto-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary);
+}
+
+.moto-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.moto-content { padding: 20px; }
+.moto-content h3 { color: var(--primary); margin: 0 0 10px 0; }
+.moto-content p { font-size: 0.9rem; color: #ccc; line-height: 1.4; }
+
+.badge {
+    background: var(--primary);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
